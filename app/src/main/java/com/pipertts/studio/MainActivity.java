@@ -32,6 +32,18 @@ public class MainActivity extends Activity {
 
     private OfflineTts tts;
 
+    /*
+     * IMPORTANT:
+     * This folder must exist inside:
+     *
+     * app/src/main/assets/vits-piper-en_US-ryan-high/
+     *
+     * Required files:
+     *
+     * en_US-ryan-high.onnx
+     * tokens.txt
+     * espeak-ng-data/
+     */
     private static final String MODEL_DIR =
             "vits-piper-en_US-ryan-high";
 
@@ -62,23 +74,17 @@ public class MainActivity extends Activity {
         getWindow().setStatusBarColor(Color.WHITE);
         getWindow().setNavigationBarColor(Color.WHITE);
 
-        // =========================================================
-        // ROOT
-        // =========================================================
-
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(
                 Color.rgb(248, 250, 252)
         );
 
-        // =========================================================
+        // ---------------------------------------------------------
         // HEADER
-        // =========================================================
+        // ---------------------------------------------------------
 
-        LinearLayout header =
-                new LinearLayout(this);
-
+        LinearLayout header = new LinearLayout(this);
         header.setOrientation(
                 LinearLayout.VERTICAL
         );
@@ -123,16 +129,13 @@ public class MainActivity extends Activity {
 
         root.addView(header);
 
-        // =========================================================
-        // SCROLL AREA
-        // =========================================================
+        // ---------------------------------------------------------
+        // SCROLL
+        // ---------------------------------------------------------
 
-        ScrollView scroll =
-                new ScrollView(this);
+        ScrollView scroll = new ScrollView(this);
 
-        LinearLayout content =
-                new LinearLayout(this);
-
+        LinearLayout content = new LinearLayout(this);
         content.setOrientation(
                 LinearLayout.VERTICAL
         );
@@ -144,9 +147,9 @@ public class MainActivity extends Activity {
                 dp(25)
         );
 
-        // =========================================================
+        // ---------------------------------------------------------
         // LABEL
-        // =========================================================
+        // ---------------------------------------------------------
 
         TextView label = text(
                 "Tutorial Script",
@@ -161,9 +164,9 @@ public class MainActivity extends Activity {
 
         content.addView(label);
 
-        // =========================================================
+        // ---------------------------------------------------------
         // SCRIPT BOX
-        // =========================================================
+        // ---------------------------------------------------------
 
         scriptBox = new EditText(this);
 
@@ -206,17 +209,16 @@ public class MainActivity extends Activity {
                         dp(300)
                 );
 
-        scriptParams.topMargin =
-                dp(10);
+        scriptParams.topMargin = dp(10);
 
         content.addView(
                 scriptBox,
                 scriptParams
         );
 
-        // =========================================================
+        // ---------------------------------------------------------
         // COUNTER
-        // =========================================================
+        // ---------------------------------------------------------
 
         counter = text(
                 "0 characters • 0 words",
@@ -234,8 +236,7 @@ public class MainActivity extends Activity {
                         ViewGroup.LayoutParams.WRAP_CONTENT
                 );
 
-        counterParams.topMargin =
-                dp(7);
+        counterParams.topMargin = dp(7);
 
         content.addView(
                 counter,
@@ -290,9 +291,9 @@ public class MainActivity extends Activity {
                 }
         );
 
-        // =========================================================
+        // ---------------------------------------------------------
         // BUTTONS
-        // =========================================================
+        // ---------------------------------------------------------
 
         LinearLayout buttons =
                 new LinearLayout(this);
@@ -304,8 +305,6 @@ public class MainActivity extends Activity {
         buttons.setGravity(
                 Gravity.CENTER_VERTICAL
         );
-
-        // Generate button
 
         generate = new Button(this);
 
@@ -343,8 +342,6 @@ public class MainActivity extends Activity {
                 generateParams
         );
 
-        // Clear button
-
         Button clear =
                 new Button(this);
 
@@ -378,9 +375,9 @@ public class MainActivity extends Activity {
 
         content.addView(buttons);
 
-        // =========================================================
+        // ---------------------------------------------------------
         // STATUS
-        // =========================================================
+        // ---------------------------------------------------------
 
         status = text(
                 "Ready — paste your script and click Generate WAV.",
@@ -413,9 +410,9 @@ public class MainActivity extends Activity {
                 statusParams
         );
 
-        // =========================================================
+        // ---------------------------------------------------------
         // FOOTER
-        // =========================================================
+        // ---------------------------------------------------------
 
         TextView footer = text(
                 "\nPiper TTS • Local CPU processing • No paid service",
@@ -442,9 +439,9 @@ public class MainActivity extends Activity {
 
         setContentView(root);
 
-        // =========================================================
+        // ---------------------------------------------------------
         // CLEAR
-        // =========================================================
+        // ---------------------------------------------------------
 
         clear.setOnClickListener(v -> {
 
@@ -455,9 +452,9 @@ public class MainActivity extends Activity {
             );
         });
 
-        // =========================================================
+        // ---------------------------------------------------------
         // GENERATE
-        // =========================================================
+        // ---------------------------------------------------------
 
         generate.setOnClickListener(
                 v -> generateSpeech()
@@ -517,10 +514,13 @@ public class MainActivity extends Activity {
                         new GenerationConfig();
 
                 generationConfig.setSid(0);
-                generationConfig.setSpeed(1.0f);
+
+                generationConfig.setSpeed(
+                        1.0f
+                );
 
                 // -------------------------------------------------
-                // GENERATE
+                // GENERATE AUDIO
                 // -------------------------------------------------
 
                 GeneratedAudio audio =
@@ -561,7 +561,7 @@ public class MainActivity extends Activity {
                 }
 
                 // -------------------------------------------------
-                // OUTPUT WAV
+                // OUTPUT FILE
                 // -------------------------------------------------
 
                 File wavFile =
@@ -582,8 +582,6 @@ public class MainActivity extends Activity {
 
                     status.setText(
                             "✓ Narration generated successfully.\n\n"
-                                    +
-                            "Saved to:\n"
                                     +
                             wavFile.getAbsolutePath()
                     );
@@ -606,12 +604,9 @@ public class MainActivity extends Activity {
                     String message =
                             e.getMessage();
 
-                    if (message == null
-                            || message.isEmpty()) {
-
+                    if (message == null) {
                         message =
-                                e.getClass()
-                                        .getSimpleName();
+                                e.toString();
                     }
 
                     status.setText(
@@ -628,51 +623,83 @@ public class MainActivity extends Activity {
     }
 
     // =============================================================
-    // INITIALIZE SHERPA-ONNX
+    // INITIALIZE SHERPA-ONNX PIPER
     // =============================================================
 
     private void initializeTts()
             throws Exception {
 
+        /*
+         * IMPORTANT:
+         *
+         * These are ASSET paths, not normal filesystem paths.
+         *
+         * Sherpa-ONNX Android loads these files through
+         * the Android AssetManager.
+         */
+
         OfflineTtsVitsModelConfig vits =
-                OfflineTtsVitsModelConfig
-                        .builder()
-                        .setModel(
-                                MODEL_DIR
-                                        + "/en_US-ryan-high.onnx"
-                        )
-                        .setTokens(
-                                MODEL_DIR
-                                        + "/tokens.txt"
-                        )
-                        .setDataDir(
-                                MODEL_DIR
-                                        + "/espeak-ng-data"
-                        )
-                        .build();
+                new OfflineTtsVitsModelConfig();
+
+        vits.setModel(
+                MODEL_DIR
+                        + "/en_US-ryan-high.onnx"
+        );
+
+        vits.setTokens(
+                MODEL_DIR
+                        + "/tokens.txt"
+        );
+
+        vits.setDataDir(
+                MODEL_DIR
+                        + "/espeak-ng-data"
+        );
+
+        // ---------------------------------------------------------
+        // MODEL CONFIG
+        // ---------------------------------------------------------
 
         OfflineTtsModelConfig modelConfig =
-                OfflineTtsModelConfig
-                        .builder()
-                        .setVits(vits)
-                        .setNumThreads(2)
-                        .setDebug(false)
-                        .setProvider("cpu")
-                        .build();
+                new OfflineTtsModelConfig();
+
+        modelConfig.setVits(vits);
+
+        modelConfig.setNumThreads(
+                2
+        );
+
+        modelConfig.setDebug(
+                false
+        );
+
+        // ---------------------------------------------------------
+        // TTS CONFIG
+        // ---------------------------------------------------------
 
         OfflineTtsConfig config =
-                OfflineTtsConfig
-                        .builder()
-                        .setModel(modelConfig)
-                        .setMaxNumSentences(1)
-                        .build();
+                new OfflineTtsConfig();
+
+        config.setModel(
+                modelConfig
+        );
+
+        config.setMaxNumSentences(
+                1
+        );
+
+        // ---------------------------------------------------------
+        // CREATE TTS
+        // ---------------------------------------------------------
 
         tts =
-                new OfflineTts(config);
+                new OfflineTts(
+                        config
+                );
     }
 
     // =============================================================
-    // RELEASE TTS
+    // CLEANUP
     // =============================================================
 
     @Override
@@ -687,4 +714,4 @@ public class MainActivity extends Activity {
 
         super.onDestroy();
     }
-}
+            }
