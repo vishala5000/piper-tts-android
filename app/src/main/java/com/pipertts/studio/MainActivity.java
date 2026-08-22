@@ -2,7 +2,6 @@ package com.pipertts.studio;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Environment;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.Gravity;
@@ -57,6 +56,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         getWindow().setStatusBarColor(Color.WHITE);
@@ -68,11 +68,8 @@ public class MainActivity extends Activity {
                 Color.rgb(248, 250, 252)
         );
 
-        // =========================================================
-        // HEADER
-        // =========================================================
-
-        LinearLayout header = new LinearLayout(this);
+        LinearLayout header =
+                new LinearLayout(this);
 
         header.setOrientation(
                 LinearLayout.VERTICAL
@@ -118,13 +115,11 @@ public class MainActivity extends Activity {
 
         root.addView(header);
 
-        // =========================================================
-        // SCROLL CONTENT
-        // =========================================================
+        ScrollView scroll =
+                new ScrollView(this);
 
-        ScrollView scroll = new ScrollView(this);
-
-        LinearLayout content = new LinearLayout(this);
+        LinearLayout content =
+                new LinearLayout(this);
 
         content.setOrientation(
                 LinearLayout.VERTICAL
@@ -136,10 +131,6 @@ public class MainActivity extends Activity {
                 dp(18),
                 dp(25)
         );
-
-        // =========================================================
-        // SCRIPT LABEL
-        // =========================================================
 
         TextView label = text(
                 "Tutorial Script",
@@ -153,10 +144,6 @@ public class MainActivity extends Activity {
         );
 
         content.addView(label);
-
-        // =========================================================
-        // SCRIPT BOX
-        // =========================================================
 
         scriptBox = new EditText(this);
 
@@ -177,13 +164,9 @@ public class MainActivity extends Activity {
                 dp(16)
         );
 
-        scriptBox.setMinHeight(
-                dp(280)
-        );
+        scriptBox.setMinHeight(dp(280));
 
-        scriptBox.setBackgroundColor(
-                Color.WHITE
-        );
+        scriptBox.setBackgroundColor(Color.WHITE);
 
         scriptBox.setInputType(
                 android.text.InputType.TYPE_CLASS_TEXT
@@ -199,17 +182,12 @@ public class MainActivity extends Activity {
                         dp(300)
                 );
 
-        scriptParams.topMargin =
-                dp(10);
+        scriptParams.topMargin = dp(10);
 
         content.addView(
                 scriptBox,
                 scriptParams
         );
-
-        // =========================================================
-        // CHARACTER / WORD COUNTER
-        // =========================================================
 
         counter = text(
                 "0 characters • 0 words",
@@ -217,9 +195,7 @@ public class MainActivity extends Activity {
                 Color.rgb(107, 114, 128)
         );
 
-        counter.setGravity(
-                Gravity.RIGHT
-        );
+        counter.setGravity(Gravity.RIGHT);
 
         LinearLayout.LayoutParams counterParams =
                 new LinearLayout.LayoutParams(
@@ -227,8 +203,7 @@ public class MainActivity extends Activity {
                         ViewGroup.LayoutParams.WRAP_CONTENT
                 );
 
-        counterParams.topMargin =
-                dp(7);
+        counterParams.topMargin = dp(7);
 
         content.addView(
                 counter,
@@ -238,7 +213,6 @@ public class MainActivity extends Activity {
         scriptBox.addTextChangedListener(
                 new android.text.TextWatcher() {
 
-                    @Override
                     public void beforeTextChanged(
                             CharSequence s,
                             int start,
@@ -247,7 +221,6 @@ public class MainActivity extends Activity {
                     ) {
                     }
 
-                    @Override
                     public void onTextChanged(
                             CharSequence s,
                             int start,
@@ -275,17 +248,12 @@ public class MainActivity extends Activity {
                         );
                     }
 
-                    @Override
                     public void afterTextChanged(
                             android.text.Editable s
                     ) {
                     }
                 }
         );
-
-        // =========================================================
-        // BUTTONS
-        // =========================================================
 
         LinearLayout buttons =
                 new LinearLayout(this);
@@ -298,8 +266,6 @@ public class MainActivity extends Activity {
                 Gravity.CENTER_VERTICAL
         );
 
-        // GENERATE BUTTON
-
         generate = new Button(this);
 
         generate.setText(
@@ -308,9 +274,7 @@ public class MainActivity extends Activity {
 
         generate.setTextSize(15);
 
-        generate.setTextColor(
-                Color.WHITE
-        );
+        generate.setTextColor(Color.WHITE);
 
         generate.setAllCaps(false);
 
@@ -325,25 +289,17 @@ public class MainActivity extends Activity {
                         1
                 );
 
-        generateParams.topMargin =
-                dp(18);
-
-        generateParams.rightMargin =
-                dp(6);
+        generateParams.topMargin = dp(18);
+        generateParams.rightMargin = dp(6);
 
         buttons.addView(
                 generate,
                 generateParams
         );
 
-        // CLEAR BUTTON
+        Button clear = new Button(this);
 
-        Button clear =
-                new Button(this);
-
-        clear.setText(
-                "Clear"
-        );
+        clear.setText("Clear");
 
         clear.setTextSize(15);
 
@@ -363,8 +319,7 @@ public class MainActivity extends Activity {
                         dp(55)
                 );
 
-        clearParams.topMargin =
-                dp(18);
+        clearParams.topMargin = dp(18);
 
         buttons.addView(
                 clear,
@@ -372,10 +327,6 @@ public class MainActivity extends Activity {
         );
 
         content.addView(buttons);
-
-        // =========================================================
-        // STATUS
-        // =========================================================
 
         status = text(
                 "Ready — paste your script and click Generate WAV.",
@@ -390,9 +341,7 @@ public class MainActivity extends Activity {
                 dp(15)
         );
 
-        status.setBackgroundColor(
-                Color.WHITE
-        );
+        status.setBackgroundColor(Color.WHITE);
 
         LinearLayout.LayoutParams statusParams =
                 new LinearLayout.LayoutParams(
@@ -400,17 +349,12 @@ public class MainActivity extends Activity {
                         ViewGroup.LayoutParams.WRAP_CONTENT
                 );
 
-        statusParams.topMargin =
-                dp(18);
+        statusParams.topMargin = dp(18);
 
         content.addView(
                 status,
                 statusParams
         );
-
-        // =========================================================
-        // FOOTER
-        // =========================================================
 
         TextView footer = text(
                 "\nPiper TTS • Local CPU processing • No paid service",
@@ -418,9 +362,7 @@ public class MainActivity extends Activity {
                 Color.rgb(156, 163, 175)
         );
 
-        footer.setGravity(
-                Gravity.CENTER
-        );
+        footer.setGravity(Gravity.CENTER);
 
         content.addView(footer);
 
@@ -437,10 +379,6 @@ public class MainActivity extends Activity {
 
         setContentView(root);
 
-        // =========================================================
-        // CLEAR
-        // =========================================================
-
         clear.setOnClickListener(v -> {
 
             scriptBox.setText("");
@@ -450,26 +388,15 @@ public class MainActivity extends Activity {
             );
         });
 
-        // =========================================================
-        // GENERATE
-        // =========================================================
-
         generate.setOnClickListener(
                 v -> generateSpeech()
         );
     }
 
-    // =============================================================
-    // GENERATE SPEECH
-    // =============================================================
-
     private void generateSpeech() {
 
         final String script =
-                scriptBox
-                        .getText()
-                        .toString()
-                        .trim();
+                scriptBox.getText().toString().trim();
 
         if (script.isEmpty()) {
 
@@ -490,13 +417,7 @@ public class MainActivity extends Activity {
 
             try {
 
-                // -------------------------------------------------
-                // INITIALIZE TTS
-                // -------------------------------------------------
-
-                if (tts == null) {
-                    initializeTts();
-                }
+                initializeTts();
 
                 runOnUiThread(() ->
                         status.setText(
@@ -504,22 +425,11 @@ public class MainActivity extends Activity {
                         )
                 );
 
-                // -------------------------------------------------
-                // GENERATION CONFIG
-                // -------------------------------------------------
-
                 GenerationConfig generationConfig =
                         new GenerationConfig();
 
                 generationConfig.setSid(0);
-
-                generationConfig.setSpeed(
-                        1.0f
-                );
-
-                // -------------------------------------------------
-                // GENERATE AUDIO
-                // -------------------------------------------------
+                generationConfig.setSpeed(1.0f);
 
                 GeneratedAudio audio =
                         tts.generateWithConfig(
@@ -534,19 +444,11 @@ public class MainActivity extends Activity {
                     );
                 }
 
-                // -------------------------------------------------
-                // OUTPUT DIRECTORY
-                // -------------------------------------------------
-
-                File musicDir =
-                        Environment
-                                .getExternalStoragePublicDirectory(
-                                        Environment.DIRECTORY_MUSIC
-                                );
-
                 File outputDir =
                         new File(
-                                musicDir,
+                                getExternalFilesDir(
+                                        null
+                                ),
                                 "Piper TTS Studio"
                         );
 
@@ -558,10 +460,6 @@ public class MainActivity extends Activity {
                     );
                 }
 
-                // -------------------------------------------------
-                // OUTPUT WAV
-                // -------------------------------------------------
-
                 File wavFile =
                         new File(
                                 outputDir,
@@ -572,14 +470,10 @@ public class MainActivity extends Activity {
                         wavFile.getAbsolutePath()
                 );
 
-                // -------------------------------------------------
-                // SUCCESS
-                // -------------------------------------------------
-
                 runOnUiThread(() -> {
 
                     status.setText(
-                            "✓ Narration generated successfully.\n\n"
+                            "✓ WAV generated successfully.\n\n"
                                     +
                             wavFile.getAbsolutePath()
                     );
@@ -599,18 +493,10 @@ public class MainActivity extends Activity {
 
                 runOnUiThread(() -> {
 
-                    String message =
-                            e.getMessage();
-
-                    if (message == null) {
-                        message =
-                                e.toString();
-                    }
-
                     status.setText(
-                            "✗ Generation failed:\n\n"
+                            "Generation failed:\n\n"
                                     +
-                            message
+                            e.toString()
                     );
 
                     generate.setEnabled(true);
@@ -620,70 +506,97 @@ public class MainActivity extends Activity {
         }).start();
     }
 
-    // =============================================================
-    // INITIALIZE SHERPA-ONNX
-    // =============================================================
-
     private void initializeTts()
             throws Exception {
+
+        if (tts != null) {
+            return;
+        }
+
+        File modelDir =
+                new File(
+                        getFilesDir(),
+                        MODEL_DIR
+                );
+
+        File model =
+                new File(
+                        modelDir,
+                        "en_US-ryan-high.onnx"
+                );
+
+        File tokens =
+                new File(
+                        modelDir,
+                        "tokens.txt"
+                );
+
+        File dataDir =
+                new File(
+                        modelDir,
+                        "espeak-ng-data"
+                );
+
+        if (!model.exists()) {
+
+            throw new Exception(
+                    "Piper model not found:\n"
+                            +
+                    model.getAbsolutePath()
+                            +
+                    "\n\nThe model files have not been copied/downloaded into the app."
+            );
+        }
+
+        if (!tokens.exists()) {
+
+            throw new Exception(
+                    "tokens.txt not found:\n"
+                            +
+                    tokens.getAbsolutePath()
+            );
+        }
+
+        if (!dataDir.exists()) {
+
+            throw new Exception(
+                    "espeak-ng-data not found:\n"
+                            +
+                    dataDir.getAbsolutePath()
+            );
+        }
 
         OfflineTtsVitsModelConfig vits =
                 new OfflineTtsVitsModelConfig();
 
         vits.setModel(
-                MODEL_DIR
-                        + "/en_US-ryan-high.onnx"
+                model.getAbsolutePath()
         );
 
         vits.setTokens(
-                MODEL_DIR
-                        + "/tokens.txt"
+                tokens.getAbsolutePath()
         );
 
         vits.setDataDir(
-                MODEL_DIR
-                        + "/espeak-ng-data"
+                dataDir.getAbsolutePath()
         );
 
         OfflineTtsModelConfig modelConfig =
                 new OfflineTtsModelConfig();
 
         modelConfig.setVits(vits);
-
-        modelConfig.setNumThreads(
-                2
-        );
-
-        modelConfig.setDebug(
-                false
-        );
+        modelConfig.setNumThreads(2);
+        modelConfig.setDebug(false);
 
         OfflineTtsConfig config =
                 new OfflineTtsConfig();
 
-        config.setModel(
-                modelConfig
-        );
+        config.setModel(modelConfig);
+        config.setMaxNumSentences(1);
 
-        config.setMaxNumSentences(
-                1
-        );
-
-        /*
-         * Sherpa-ONNX Android constructor.
-         *
-         * The AssetManager is required because the Piper model
-         * is packaged inside app/src/main/assets/.
-         */
-        tts = new OfflineTts(
-                getAssets(),
-                config
-        );
+        tts =
+                new OfflineTts(config);
     }
-
-    // =============================================================
-    // CLEANUP
-    // =============================================================
 
     @Override
     protected void onDestroy() {
