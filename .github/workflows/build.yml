@@ -11,48 +11,134 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      # --------------------------------------------------
+      # 1. Checkout repository
+      # --------------------------------------------------
       - name: Checkout
         uses: actions/checkout@v4
 
+      # --------------------------------------------------
+      # 2. Java 17
+      # --------------------------------------------------
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
 
+      # --------------------------------------------------
+      # 3. Android SDK
+      # --------------------------------------------------
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      # --------------------------------------------------
+      # 4. Android SDK packages
+      # --------------------------------------------------
       - name: Install Android SDK
         run: |
           yes | sdkmanager --licenses || true
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          sdkmanager \
+            "platforms;android-35" \
+            "build-tools;35.0.0"
 
+      # --------------------------------------------------
+      # 5. Gradle 8.9
+      # --------------------------------------------------
       - name: Download Gradle
         run: |
           wget -q https://services.gradle.org/distributions/gradle-8.9-bin.zip
           unzip -q gradle-8.9-bin.zip
           echo "$PWD/gradle-8.9/bin" >> "$GITHUB_PATH"
 
-      - name: Download Piper model
+      # --------------------------------------------------
+      # 6. Create Piper assets directory
+      # --------------------------------------------------
+      - name: Create Piper assets directory
         run: |
           mkdir -p app/src/main/assets/piper
 
-          wget -q --show-progress \
-            "https://github.com/vishala5000/piper-tts-android/releases/download/v1.0-model/en_US-ryan-high.onnx" \
-            -O app/src/main/assets/piper/en_US-ryan-high.onnx
+      # --------------------------------------------------
+      # 7. Download Piper voice model
+      # --------------------------------------------------
+      - name: Download Piper model
+        shell: bash
+        run: |
+          set -e
 
-          wget -q --show-progress \
+          echo "Downloading Piper voice model..."
+
+          curl -L --fail --retry 3 --retry-delay 2 \
+            "https://github.com/vishala5000/piper-tts-android/releases/download/v1.0-model/en_US-ryan-high.onnx" \
+            -o "app/src/main/assets/piper/en_US-ryan-high.onnx"
+
+          echo "Downloading Piper model configuration..."
+
+          curl -L --fail --retry 3 --retry-delay 2 \
             "https://github.com/vishala5000/piper-tts-android/releases/download/v1.0-model/en_US-ryan-high.onnx.json" \
-            -O app/src/main/assets/piper/en_US-ryan-high.onnx.json
+            -o "app/src/main/assets/piper/en_US-ryan-high.onnx.json"
+
+          echo ""
+          echo "=========================================="
+          echo "Downloaded Piper files:"
+          echo "=========================================="
 
           ls -lh app/src/main/assets/piper/
 
-      - name: Build APK
-        run: gradle assembleDebug --stacktrace
+          echo ""
+          echo "Checking files..."
 
+          test -s "app/src/main/assets/piper/en_US-ryan-high.onnx"
+          test -s "app/src/main/assets/piper/en_US-ryan-high.onnx.json"
+
+          echo ""
+          echo "Piper model files downloaded successfully."
+
+      # --------------------------------------------------
+      # 8. Show project structure
+      # --------------------------------------------------
+      - name: Verify project
+        run: |
+          echo "=========================================="
+          echo "Project files"
+          echo "=========================================="
+
+          find app/src/main -maxdepth 4 -type f -print
+
+          echo ""
+          echo "=========================================="
+          echo "Piper assets"
+          echo "=========================================="
+
+          ls -lh app/src/main/assets/piper/
+
+      # --------------------------------------------------
+      # 9. Build Debug APK
+      # --------------------------------------------------
+      - name: Build APK
+        run: |
+          gradle assembleDebug --stacktrace
+
+      # --------------------------------------------------
+      # 10. Verify APK
+      # --------------------------------------------------
+      - name: Verify APK
+        run: |
+          echo "=========================================="
+          echo "APK generated:"
+          echo "=========================================="
+
+          ls -lh app/build/outputs/apk/debug/app-debug.apk
+
+          test -s app/build/outputs/apk/debug/app-debug.apk
+
+      # --------------------------------------------------
+      # 11. Upload APK
+      # --------------------------------------------------
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Piper-TTS-Studio-debug
           path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
