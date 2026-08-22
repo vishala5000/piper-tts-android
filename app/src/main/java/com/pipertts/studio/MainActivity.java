@@ -462,57 +462,54 @@ public class MainActivity extends Activity {
                     );
 
                     generate.setEnabled(true);
-                });
-            }
+    private void initializeTts() throws Exception {
 
-        }).start();
+    File modelDir = new File(getFilesDir(), MODEL_DIR);
+
+    File modelFile = new File(modelDir, "en_US-ryan-high.onnx");
+    File tokensFile = new File(modelDir, "tokens.txt");
+    File dataDir = new File(modelDir, "espeak-ng-data");
+
+    if (!modelFile.exists()) {
+        throw new Exception(
+            "Piper model not found:\n" +
+            modelFile.getAbsolutePath()
+        );
     }
 
-    private void initializeTts()
-            throws Exception {
-
-        OfflineTtsVitsModelConfig vits =
-                new OfflineTtsVitsModelConfig();
-
-        vits.setModel(
-                MODEL_DIR
-                        + "/en_US-ryan-high.onnx"
+    if (!tokensFile.exists()) {
+        throw new Exception(
+            "tokens.txt not found:\n" +
+            tokensFile.getAbsolutePath()
         );
-
-        vits.setTokens(
-                MODEL_DIR
-                        + "/tokens.txt"
-        );
-
-        vits.setDataDir(
-                MODEL_DIR
-                        + "/espeak-ng-data"
-        );
-
-        OfflineTtsModelConfig modelConfig =
-                new OfflineTtsModelConfig();
-
-        modelConfig.setVits(vits);
-        modelConfig.setNumThreads(2);
-        modelConfig.setDebug(false);
-
-        OfflineTtsConfig config =
-                new OfflineTtsConfig();
-
-        config.setModel(modelConfig);
-        config.setMaxNumSentences(1);
-
-        tts = new OfflineTts(config);
     }
 
-    @Override
-    protected void onDestroy() {
-
-        if (tts != null) {
-            tts.release();
-            tts = null;
-        }
-
-        super.onDestroy();
+    if (!dataDir.exists()) {
+        throw new Exception(
+            "espeak-ng-data not found:\n" +
+            dataDir.getAbsolutePath()
+        );
     }
-            }
+
+    OfflineTtsVitsModelConfig vits =
+            new OfflineTtsVitsModelConfig();
+
+    vits.setModel(modelFile.getAbsolutePath());
+    vits.setTokens(tokensFile.getAbsolutePath());
+    vits.setDataDir(dataDir.getAbsolutePath());
+
+    OfflineTtsModelConfig modelConfig =
+            new OfflineTtsModelConfig();
+
+    modelConfig.setVits(vits);
+    modelConfig.setNumThreads(2);
+    modelConfig.setDebug(false);
+
+    OfflineTtsConfig config =
+            new OfflineTtsConfig();
+
+    config.setModel(modelConfig);
+    config.setMaxNumSentences(1);
+
+    tts = new OfflineTts(config);
+}
