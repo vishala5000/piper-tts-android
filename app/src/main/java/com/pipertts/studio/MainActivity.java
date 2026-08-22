@@ -32,18 +32,6 @@ public class MainActivity extends Activity {
 
     private OfflineTts tts;
 
-    /*
-     * IMPORTANT:
-     * This folder must exist inside:
-     *
-     * app/src/main/assets/vits-piper-en_US-ryan-high/
-     *
-     * Required files:
-     *
-     * en_US-ryan-high.onnx
-     * tokens.txt
-     * espeak-ng-data/
-     */
     private static final String MODEL_DIR =
             "vits-piper-en_US-ryan-high";
 
@@ -80,11 +68,12 @@ public class MainActivity extends Activity {
                 Color.rgb(248, 250, 252)
         );
 
-        // ---------------------------------------------------------
+        // =========================================================
         // HEADER
-        // ---------------------------------------------------------
+        // =========================================================
 
         LinearLayout header = new LinearLayout(this);
+
         header.setOrientation(
                 LinearLayout.VERTICAL
         );
@@ -129,13 +118,14 @@ public class MainActivity extends Activity {
 
         root.addView(header);
 
-        // ---------------------------------------------------------
-        // SCROLL
-        // ---------------------------------------------------------
+        // =========================================================
+        // SCROLL CONTENT
+        // =========================================================
 
         ScrollView scroll = new ScrollView(this);
 
         LinearLayout content = new LinearLayout(this);
+
         content.setOrientation(
                 LinearLayout.VERTICAL
         );
@@ -147,9 +137,9 @@ public class MainActivity extends Activity {
                 dp(25)
         );
 
-        // ---------------------------------------------------------
-        // LABEL
-        // ---------------------------------------------------------
+        // =========================================================
+        // SCRIPT LABEL
+        // =========================================================
 
         TextView label = text(
                 "Tutorial Script",
@@ -164,9 +154,9 @@ public class MainActivity extends Activity {
 
         content.addView(label);
 
-        // ---------------------------------------------------------
+        // =========================================================
         // SCRIPT BOX
-        // ---------------------------------------------------------
+        // =========================================================
 
         scriptBox = new EditText(this);
 
@@ -209,16 +199,17 @@ public class MainActivity extends Activity {
                         dp(300)
                 );
 
-        scriptParams.topMargin = dp(10);
+        scriptParams.topMargin =
+                dp(10);
 
         content.addView(
                 scriptBox,
                 scriptParams
         );
 
-        // ---------------------------------------------------------
-        // COUNTER
-        // ---------------------------------------------------------
+        // =========================================================
+        // CHARACTER / WORD COUNTER
+        // =========================================================
 
         counter = text(
                 "0 characters • 0 words",
@@ -236,7 +227,8 @@ public class MainActivity extends Activity {
                         ViewGroup.LayoutParams.WRAP_CONTENT
                 );
 
-        counterParams.topMargin = dp(7);
+        counterParams.topMargin =
+                dp(7);
 
         content.addView(
                 counter,
@@ -291,9 +283,9 @@ public class MainActivity extends Activity {
                 }
         );
 
-        // ---------------------------------------------------------
+        // =========================================================
         // BUTTONS
-        // ---------------------------------------------------------
+        // =========================================================
 
         LinearLayout buttons =
                 new LinearLayout(this);
@@ -305,6 +297,8 @@ public class MainActivity extends Activity {
         buttons.setGravity(
                 Gravity.CENTER_VERTICAL
         );
+
+        // GENERATE BUTTON
 
         generate = new Button(this);
 
@@ -342,10 +336,14 @@ public class MainActivity extends Activity {
                 generateParams
         );
 
+        // CLEAR BUTTON
+
         Button clear =
                 new Button(this);
 
-        clear.setText("Clear");
+        clear.setText(
+                "Clear"
+        );
 
         clear.setTextSize(15);
 
@@ -375,9 +373,9 @@ public class MainActivity extends Activity {
 
         content.addView(buttons);
 
-        // ---------------------------------------------------------
+        // =========================================================
         // STATUS
-        // ---------------------------------------------------------
+        // =========================================================
 
         status = text(
                 "Ready — paste your script and click Generate WAV.",
@@ -410,9 +408,9 @@ public class MainActivity extends Activity {
                 statusParams
         );
 
-        // ---------------------------------------------------------
+        // =========================================================
         // FOOTER
-        // ---------------------------------------------------------
+        // =========================================================
 
         TextView footer = text(
                 "\nPiper TTS • Local CPU processing • No paid service",
@@ -439,9 +437,9 @@ public class MainActivity extends Activity {
 
         setContentView(root);
 
-        // ---------------------------------------------------------
+        // =========================================================
         // CLEAR
-        // ---------------------------------------------------------
+        // =========================================================
 
         clear.setOnClickListener(v -> {
 
@@ -452,9 +450,9 @@ public class MainActivity extends Activity {
             );
         });
 
-        // ---------------------------------------------------------
+        // =========================================================
         // GENERATE
-        // ---------------------------------------------------------
+        // =========================================================
 
         generate.setOnClickListener(
                 v -> generateSpeech()
@@ -561,7 +559,7 @@ public class MainActivity extends Activity {
                 }
 
                 // -------------------------------------------------
-                // OUTPUT FILE
+                // OUTPUT WAV
                 // -------------------------------------------------
 
                 File wavFile =
@@ -623,20 +621,11 @@ public class MainActivity extends Activity {
     }
 
     // =============================================================
-    // INITIALIZE SHERPA-ONNX PIPER
+    // INITIALIZE SHERPA-ONNX
     // =============================================================
 
     private void initializeTts()
             throws Exception {
-
-        /*
-         * IMPORTANT:
-         *
-         * These are ASSET paths, not normal filesystem paths.
-         *
-         * Sherpa-ONNX Android loads these files through
-         * the Android AssetManager.
-         */
 
         OfflineTtsVitsModelConfig vits =
                 new OfflineTtsVitsModelConfig();
@@ -656,10 +645,6 @@ public class MainActivity extends Activity {
                         + "/espeak-ng-data"
         );
 
-        // ---------------------------------------------------------
-        // MODEL CONFIG
-        // ---------------------------------------------------------
-
         OfflineTtsModelConfig modelConfig =
                 new OfflineTtsModelConfig();
 
@@ -673,10 +658,6 @@ public class MainActivity extends Activity {
                 false
         );
 
-        // ---------------------------------------------------------
-        // TTS CONFIG
-        // ---------------------------------------------------------
-
         OfflineTtsConfig config =
                 new OfflineTtsConfig();
 
@@ -688,14 +669,16 @@ public class MainActivity extends Activity {
                 1
         );
 
-        // ---------------------------------------------------------
-        // CREATE TTS
-        // ---------------------------------------------------------
-
-        tts =
-                new OfflineTts(
-                        config
-                );
+        /*
+         * Sherpa-ONNX Android constructor.
+         *
+         * The AssetManager is required because the Piper model
+         * is packaged inside app/src/main/assets/.
+         */
+        tts = new OfflineTts(
+                getAssets(),
+                config
+        );
     }
 
     // =============================================================
@@ -714,4 +697,4 @@ public class MainActivity extends Activity {
 
         super.onDestroy();
     }
-            }
+}
