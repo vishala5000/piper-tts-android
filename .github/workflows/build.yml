@@ -11,9 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Setup Java
         uses: actions/setup-java@v5
@@ -22,7 +21,7 @@ jobs:
           java-version: '17'
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v4
+        uses: android-actions/setup-android@v3
 
       - name: Install Android SDK
         run: |
@@ -35,11 +34,25 @@ jobs:
           unzip -q gradle-8.9-bin.zip
           echo "$PWD/gradle-8.9/bin" >> "$GITHUB_PATH"
 
+      - name: Download Piper model
+        run: |
+          mkdir -p app/src/main/assets/piper
+
+          wget -q --show-progress \
+            "https://github.com/vishala5000/piper-tts-android/releases/download/v1.0-model/en_US-ryan-high.onnx" \
+            -O app/src/main/assets/piper/en_US-ryan-high.onnx
+
+          wget -q --show-progress \
+            "https://github.com/vishala5000/piper-tts-android/releases/download/v1.0-model/en_US-ryan-high.onnx.json" \
+            -O app/src/main/assets/piper/en_US-ryan-high.onnx.json
+
+          ls -lh app/src/main/assets/piper/
+
       - name: Build APK
         run: gradle assembleDebug --stacktrace
 
       - name: Upload APK
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: Piper-TTS-Studio-debug
           path: app/build/outputs/apk/debug/app-debug.apk
