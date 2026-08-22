@@ -464,52 +464,32 @@ public class MainActivity extends Activity {
                     generate.setEnabled(true);
     private void initializeTts() throws Exception {
 
-    File modelDir = new File(getFilesDir(), MODEL_DIR);
-
-    File modelFile = new File(modelDir, "en_US-ryan-high.onnx");
-    File tokensFile = new File(modelDir, "tokens.txt");
-    File dataDir = new File(modelDir, "espeak-ng-data");
-
-    if (!modelFile.exists()) {
-        throw new Exception(
-            "Piper model not found:\n" +
-            modelFile.getAbsolutePath()
-        );
-    }
-
-    if (!tokensFile.exists()) {
-        throw new Exception(
-            "tokens.txt not found:\n" +
-            tokensFile.getAbsolutePath()
-        );
-    }
-
-    if (!dataDir.exists()) {
-        throw new Exception(
-            "espeak-ng-data not found:\n" +
-            dataDir.getAbsolutePath()
-        );
-    }
-
     OfflineTtsVitsModelConfig vits =
-            new OfflineTtsVitsModelConfig();
-
-    vits.setModel(modelFile.getAbsolutePath());
-    vits.setTokens(tokensFile.getAbsolutePath());
-    vits.setDataDir(dataDir.getAbsolutePath());
+            OfflineTtsVitsModelConfig.builder()
+                    .setModel(
+                            MODEL_DIR + "/en_US-ryan-high.onnx"
+                    )
+                    .setTokens(
+                            MODEL_DIR + "/tokens.txt"
+                    )
+                    .setDataDir(
+                            MODEL_DIR + "/espeak-ng-data"
+                    )
+                    .build();
 
     OfflineTtsModelConfig modelConfig =
-            new OfflineTtsModelConfig();
-
-    modelConfig.setVits(vits);
-    modelConfig.setNumThreads(2);
-    modelConfig.setDebug(false);
+            OfflineTtsModelConfig.builder()
+                    .setVits(vits)
+                    .setNumThreads(2)
+                    .setDebug(false)
+                    .setProvider("cpu")
+                    .build();
 
     OfflineTtsConfig config =
-            new OfflineTtsConfig();
-
-    config.setModel(modelConfig);
-    config.setMaxNumSentences(1);
+            OfflineTtsConfig.builder()
+                    .setModel(modelConfig)
+                    .setMaxNumSentences(1)
+                    .build();
 
     tts = new OfflineTts(config);
 }
