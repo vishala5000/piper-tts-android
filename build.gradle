@@ -1,3 +1,21 @@
 plugins {
-    id 'com.android.application' version '8.6.1' apply false
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.pipertts.studio'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.pipertts.studio'
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.core:core-ktx:1.15.0'
 }
